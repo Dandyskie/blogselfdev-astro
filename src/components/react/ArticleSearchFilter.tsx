@@ -8,6 +8,7 @@ export interface ArticleItem {
   category: string;
   readingTime?: string;
   heroImage?: string;
+  author?: string;
 }
 
 interface Props {
@@ -19,7 +20,14 @@ export default function ArticleSearchFilter({ initialArticles }: Props) {
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [bookmarkedIds, setBookmarkedIds] = useState<Record<string, boolean>>({});
 
-  const categories = ['Semua', 'Mindset', 'Produktivitas', 'Kebiasaan', 'Komunikasi'];
+  const categories = [
+    'Semua',
+    'Mindset',
+    'Produktivitas',
+    'Kesehatan Mental',
+    'Finansial',
+    'Karir & Relasi',
+  ];
 
   const filteredArticles = useMemo(() => {
     return initialArticles.filter((article) => {
@@ -47,30 +55,18 @@ export default function ArticleSearchFilter({ initialArticles }: Props) {
     }));
   };
 
-  const getCategoryColor = (cat: string) => {
-    switch (cat.toLowerCase()) {
-      case 'mindset':
-        return 'bg-purple-50 text-purple-700 border-purple-200';
-      case 'produktivitas':
-        return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'kebiasaan':
-        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      case 'komunikasi':
-        return 'bg-amber-50 text-amber-700 border-amber-200';
-      default:
-        return 'bg-slate-100 text-slate-700 border-slate-200';
-    }
-  };
-
   return (
     <div className="w-full">
       {/* Search & Category Filter Controls */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mb-8">
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div className="bg-white p-5 sm:p-6 rounded-xl border border-stone-200 mb-8">
+        <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
           {/* Live Search Input */}
-          <div className="relative w-full md:w-96">
-            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="relative w-full md:w-80">
+            <label htmlFor="article-filter-search" className="sr-only">
+              Cari arsip tulisan
+            </label>
+            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -80,37 +76,40 @@ export default function ArticleSearchFilter({ initialArticles }: Props) {
               </svg>
             </span>
             <input
+              id="article-filter-search"
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari topik, kebiasaan, mindset..."
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-800 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+              placeholder="Cari topik atau kata kunci..."
+              className="w-full min-h-[44px] pl-10 pr-12 bg-stone-50 border border-stone-200 rounded-md text-stone-900 placeholder-stone-400 text-xs sm:text-sm focus:outline-none focus:border-stone-900 transition-colors"
             />
             {searchQuery && (
               <button
+                type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-xs text-slate-400 hover:text-slate-600"
+                className="absolute inset-y-0 right-0 pr-3 min-w-[44px] flex items-center justify-center text-xs text-stone-400 hover:text-stone-700"
+                aria-label="Hapus kata kunci pencarian"
               >
                 Hapus
               </button>
             )}
           </div>
 
-          {/* Interactive Category Pills */}
-          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider mr-1">
-              Topik:
-            </span>
+          {/* Category Filter Pills */}
+          <div className="flex flex-wrap items-center gap-1.5" role="tablist" aria-label="Kategori Tulisan">
             {categories.map((category) => {
               const active = selectedCategory === category;
               return (
                 <button
                   key={category}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
+                  className={`min-h-[44px] px-3.5 py-2 rounded-md text-xs font-medium transition-colors cursor-pointer ${
                     active
-                      ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-200 scale-105'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                      ? 'bg-stone-900 text-stone-50'
+                      : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
                   }`}
                 >
                   {category}
@@ -120,122 +119,112 @@ export default function ArticleSearchFilter({ initialArticles }: Props) {
           </div>
         </div>
 
-        {/* Status Bar */}
-        <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+        {/* Counter Summary */}
+        <div className="mt-4 pt-3.5 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500">
           <span>
-            Ditemukan <strong>{filteredArticles.length}</strong> dari {initialArticles.length} artikel
+            Menampilkan <strong>{filteredArticles.length}</strong> tulisan
+            {selectedCategory !== 'Semua' && ` dalam kategori ${selectedCategory}`}
           </span>
-          <span className="hidden sm:inline-block text-slate-400 italic">
-            Fitur pencarian instan bertenaga React
+          <span className="text-[11px] text-stone-400 hidden sm:inline-block">
+            Pencarian instan bertenaga React Island
           </span>
         </div>
       </div>
 
-      {/* Articles Grid */}
+      {/* Grid of Articles */}
       {filteredArticles.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-slate-200">
-          <p className="text-3xl mb-2">🔍</p>
-          <h4 className="text-lg font-bold text-slate-700">Tidak ada artikel yang cocok</h4>
-          <p className="text-sm text-slate-500 mt-1 max-w-sm mx-auto">
-            Coba gunakan kata kunci lain atau pilih kategori "Semua" untuk melihat seluruh wawasan.
+        <div className="text-center py-16 bg-white rounded-xl border border-stone-200 p-6">
+          <p className="text-xs font-semibold uppercase tracking-wider text-stone-400 mb-1">
+            Indeks Kosong
+          </p>
+          <h4 className="text-base font-bold text-stone-800">
+            Tidak ditemukan tulisan yang cocok
+          </h4>
+          <p className="text-xs text-stone-500 mt-1 max-w-sm mx-auto">
+            Gunakan kata kunci pencarian yang lebih umum atau kembalikan pilihan ke kategori Semua.
           </p>
           <button
+            type="button"
             onClick={() => {
               setSearchQuery('');
               setSelectedCategory('Semua');
             }}
-            className="mt-4 px-4 py-2 bg-emerald-50 text-emerald-700 font-semibold text-xs rounded-lg hover:bg-emerald-100 transition-colors"
+            className="mt-4 min-h-[44px] px-4 py-2 bg-stone-100 text-stone-800 font-medium text-xs rounded-md hover:bg-stone-200 transition-colors"
           >
-            Reset Filter
+            Tampilkan Semua Artikel
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {filteredArticles.map((article) => {
             const isBookmarked = !!bookmarkedIds[article.id];
             return (
               <article
                 key={article.id}
-                className="group bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                className="bg-white rounded-xl border border-stone-200 overflow-hidden flex flex-col hover:border-stone-300 transition-colors"
               >
-                {/* Thumbnail Header */}
-                <div className="relative aspect-video bg-slate-100 overflow-hidden">
+                {/* Thumbnail Image */}
+                <div className="relative aspect-video bg-stone-100 overflow-hidden">
                   {article.heroImage ? (
                     <img
                       src={article.heroImage}
                       alt={article.title}
                       loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-4xl text-slate-400">
-                      🌱
+                    <div className="w-full h-full flex items-center justify-center text-xs text-stone-400">
+                      wakeup editorial
                     </div>
                   )}
 
-                  {/* Bookmark Button */}
+                  {/* Bookmark Button (44px min tap target) */}
                   <button
+                    type="button"
                     onClick={(e) => toggleBookmark(article.id, e)}
-                    title={isBookmarked ? 'Hapus bookmark' : 'Simpan untuk nanti'}
-                    className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md transition-all ${
+                    title={isBookmarked ? 'Batalkan simpan' : 'Simpan bacaan'}
+                    aria-label={isBookmarked ? 'Hapus dari daftar simpanan' : 'Simpan artikel ini'}
+                    className={`min-w-[44px] min-h-[44px] absolute top-2 right-2 flex items-center justify-center rounded-md transition-colors ${
                       isBookmarked
-                        ? 'bg-amber-500 text-white shadow-md'
-                        : 'bg-white/80 text-slate-600 hover:bg-white hover:text-slate-900'
+                        ? 'bg-stone-900 text-stone-50'
+                        : 'bg-white/90 text-stone-600 hover:bg-white hover:text-stone-950'
                     }`}
                   >
-                    <svg
-                      className="w-4 h-4 fill-current"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={isBookmarked ? '0' : '2'}
-                    >
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={isBookmarked ? 0 : 2}>
                       <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                     </svg>
                   </button>
-
-                  {/* Category Pill on Image */}
-                  <div className="absolute bottom-3 left-3">
-                    <span
-                      className={`text-[11px] font-semibold px-2.5 py-1 rounded-md border backdrop-blur-md ${getCategoryColor(
-                        article.category
-                      )}`}
-                    >
-                      {article.category}
-                    </span>
-                  </div>
                 </div>
 
-                {/* Content Body */}
+                {/* Article Card Body */}
                 <div className="p-5 flex flex-col flex-1">
-                  <div className="flex items-center gap-2 text-xs text-slate-400 mb-2">
-                    <span>{article.pubDate}</span>
+                  <div className="flex items-center gap-2 text-xs text-stone-500 mb-2.5">
+                    <span className="font-semibold text-stone-700 bg-stone-100 px-2 py-0.5 rounded text-[11px]">
+                      {article.category}
+                    </span>
                     <span>•</span>
                     <span>{article.readingTime || '5 menit baca'}</span>
                   </div>
 
-                  <h3 className="text-base sm:text-lg font-bold text-slate-900 group-hover:text-emerald-700 transition-colors line-clamp-2 leading-snug mb-2">
+                  <h3 className="text-base sm:text-lg font-bold text-stone-900 leading-snug mb-2 hover:text-stone-700 transition-colors">
                     <a href={`/blog/${article.id}/`} className="focus:outline-none">
                       {article.title}
                     </a>
                   </h3>
 
-                  <p className="text-xs sm:text-sm text-slate-600 line-clamp-3 mb-4 flex-1 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-stone-600 line-clamp-3 mb-5 flex-1 leading-relaxed">
                     {article.description}
                   </p>
 
-                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between mt-auto">
+                  <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500 mt-auto">
+                    <span>{article.author || 'Tim Redaksi'}</span>
                     <a
                       href={`/blog/${article.id}/`}
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 group-hover:text-emerald-700 group-hover:gap-2 transition-all"
+                      className="font-semibold text-stone-900 hover:text-stone-700 inline-flex items-center gap-1 min-h-[44px] py-2"
                     >
-                      Baca Tulisan
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                      </svg>
+                      <span>Baca Lengkap</span>
+                      <span>→</span>
                     </a>
-                    {isBookmarked && (
-                      <span className="text-[11px] text-amber-600 font-medium">Tersimpan</span>
-                    )}
                   </div>
                 </div>
               </article>
@@ -246,4 +235,3 @@ export default function ArticleSearchFilter({ initialArticles }: Props) {
     </div>
   );
 }
-

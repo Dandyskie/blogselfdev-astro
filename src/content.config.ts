@@ -14,6 +14,7 @@ const blog = defineCollection({
 			category: z.string().default('Mindset'),
 			readingTime: z.string().optional().default('5 menit baca'),
 			featured: z.boolean().optional().default(false),
+			author: z.string().optional().default('Tim Redaksi'),
 		}),
 });
 

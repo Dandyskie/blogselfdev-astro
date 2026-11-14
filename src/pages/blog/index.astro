@@ -22,27 +22,28 @@ const articlesForReact = posts.map((post) => ({
 	category: post.data.category || 'Mindset',
 	readingTime: post.data.readingTime || '5 menit baca',
 	heroImage: post.data.heroImage?.src || '',
+	author: post.data.author || 'Tim Redaksi',
 }));
 ---
 
 <!doctype html>
 <html lang="id">
 	<head>
-		<BaseHead title={`Daftar Lengkap Artikel - ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+		<BaseHead title={`Indeks Arsip Tulisan | ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
 	</head>
-	<body class="bg-slate-50 text-slate-800 antialiased selection:bg-emerald-500 selection:text-white">
+	<body class="bg-[#fafaf9] text-stone-900 antialiased selection:bg-stone-900 selection:text-white">
 		<Header />
-		<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+		<main class="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
 			<!-- Header Section -->
-			<div class="text-center max-w-3xl mx-auto mb-12">
-				<div class="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-200 mb-3">
-					📚 Arsip Tulisan & Wawasan
-				</div>
-				<h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
-					Semua Artikel Pengembangan Diri
+			<div class="mb-10 pb-6 border-b border-stone-200">
+				<span class="text-xs font-semibold uppercase tracking-widest text-stone-500 block mb-1">
+					Indeks Publikasi
+				</span>
+				<h1 class="text-3xl sm:text-5xl font-black text-stone-900 tracking-tight mb-3">
+					Semua Tulisan & Arsip Editorial
 				</h1>
-				<p class="text-sm sm:text-base text-slate-600 leading-relaxed">
-					Temukan seluruh panduan praktis, teknik mindfulness, dan strategi produktivitas terkurasi untuk memandu perjalanan bertumbuh Anda.
+				<p class="text-xs sm:text-sm text-stone-600 max-w-xl leading-relaxed">
+					Kumpulan panduan, catatan reflektif, dan strategi hidup mandiri untuk generasi usia 18 sampai 30 tahun.
 				</p>
 			</div>
 
